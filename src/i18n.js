@@ -33,6 +33,16 @@ export const i18n = {
     namePlaceholder: 'Your name',
     emailPlaceholder: 'Your email',
     submitLabel: 'Subscribe →',
+    portfolioEyebrow: 'Work',
+    portfolioProjects: [
+      {
+        title: 'Real Estate Lead Gen Quiz',
+        client: 'Eugenie Do — Broker, Greater Montréal',
+        desc: 'Neighbourhood-matching quiz with a full CDP data pipeline, profile reconciliation, and privacy-aware lead tracking.',
+        tags: ['CDP', 'Lead Gen', 'Email Flows'],
+        slug: 'real-estate-quiz',
+      },
+    ],
     footer: 'Edgar · Marketing Automation · Montréal',
   },
   fr: {
@@ -69,6 +79,16 @@ export const i18n = {
     namePlaceholder: 'Votre nom',
     emailPlaceholder: 'Votre courriel',
     submitLabel: 'S\'abonner →',
+    portfolioEyebrow: 'Projets',
+    portfolioProjects: [
+      {
+        title: 'Quiz de génération de leads immobiliers',
+        client: 'Eugenie Do — Courtière, Grand Montréal',
+        desc: 'Quiz de correspondance de quartier avec pipeline CDP complet, réconciliation de profils et capture de leads respectueuse de la vie privée.',
+        tags: ['CDP', 'Génération de leads', 'Flux e-mail'],
+        slug: 'real-estate-quiz',
+      },
+    ],
     footer: 'Edgar · Automatisation Marketing · Montréal',
   },
 }
@@ -80,4 +100,11 @@ export function detectLang() {
   const nav = (navigator.language || '').toLowerCase()
   if (nav.startsWith('fr')) return 'fr'
   return 'en'
+}
+
+export function detectPage() {
+  const path = window.location.pathname.toLowerCase()
+  if (/^\/(en|fr)\/portfolio\/[^/]+/.test(path)) return 'article'
+  if (/^\/(en|fr)\/portfolio(\/|$)/.test(path)) return 'portfolio'
+  return 'home'
 }

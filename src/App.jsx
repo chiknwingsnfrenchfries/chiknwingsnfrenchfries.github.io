@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { i18n, detectLang } from './i18n'
+import { i18n, detectLang, detectPage } from './i18n'
 import { useReveal } from './useReveal'
 import ScrollExpand from './ScrollExpand'
 import ArticlePage from './ArticlePage'
@@ -37,7 +37,10 @@ function FullMenu({ open, onClose, lang, setLang, t }) {
               href={l.href}
               style={{ transitionDelay: open ? `${i * 60 + 100}ms` : '0ms' }}
               {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}
-              onClick={onClose}
+              onClick={(e) => {
+                if (l.onClick) { e.preventDefault(); l.onClick() }
+                else onClose()
+              }}
             >
               <span className="fullmenu-link-num">0{i + 1}</span>
               {l.title}
@@ -298,10 +301,47 @@ function Footer({ t }) {
   )
 }
 
+/* ─── PORTFOLIO LISTING ─── */
+function PortfolioPage({ t, onCardClick }) {
+  return (
+    <div className="site-wrap" style={{ paddingTop: 80, paddingBottom: 80 }}>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em',
+        textTransform: 'uppercase', color: 'var(--accent)', display: 'block', marginBottom: 16,
+      }}>
+        {t.portfolioEyebrow}
+      </span>
+      <h1 style={{
+        fontFamily: 'var(--font-display)', fontSize: 'clamp(40px, 10vw, 60px)',
+        fontWeight: 600, lineHeight: 1.05, letterSpacing: '-0.02em',
+        color: 'var(--ink)', marginBottom: 56,
+      }}>
+        Portfolio
+      </h1>
+      <div className="portfolio-grid">
+        {t.portfolioProjects.map((project, i) => (
+          <button key={i} className="portfolio-card" onClick={() => onCardClick(project.slug)}>
+            <div className="portfolio-card-title">{project.title}</div>
+            <div className="portfolio-card-client">{project.client}</div>
+            <div className="portfolio-card-desc">{project.desc}</div>
+            <div className="portfolio-card-footer">
+              <div className="portfolio-card-tags">
+                {project.tags.map((tag, j) => (
+                  <span key={j} className="portfolio-tag">{tag}</span>
+                ))}
+              </div>
+              <span className="portfolio-card-arrow">↗</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ─── APP ─── */
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [page, setPage] = useState('home')
   const [lang, setLang] = useState(() => {
     const redirectPath = sessionStorage.getItem('redirectPath')
     if (redirectPath) {
@@ -310,6 +350,7 @@ export default function App() {
     }
     return detectLang()
   })
+  const [page, setPage] = useState(() => detectPage())
 
   const t = i18n[lang]
 
@@ -317,6 +358,12 @@ export default function App() {
     setPage('portfolio')
     setMenuOpen(false)
     history.pushState({ page: 'portfolio', lang }, '', `/${lang}/portfolio`)
+    window.scrollTo(0, 0)
+  }
+
+  function goToArticle(slug) {
+    setPage('article')
+    history.pushState({ page: 'article', slug, lang }, '', `/${lang}/portfolio/${slug}`)
     window.scrollTo(0, 0)
   }
 
@@ -328,8 +375,10 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.lang = lang
-    document.title = page === 'portfolio'
+    document.title = page === 'article'
       ? 'Lead Gen Quiz — Edgar Ramos'
+      : page === 'portfolio'
+      ? 'Portfolio — Edgar Ramos'
       : lang === 'fr' ? 'Edgar — Automatisation Marketing' : 'Edgar — Marketing Automation'
     const path = window.location.pathname
     if (!/^\/(en|fr)(\/|$)/.test(path)) {
@@ -339,36 +388,46 @@ export default function App() {
 
   useEffect(() => {
     const onPop = (e) => {
-      if (e.state?.page === 'portfolio') setPage('portfolio')
+      if (e.state?.page === 'article') setPage('article')
+      else if (e.state?.page === 'portfolio') setPage('portfolio')
       else { setPage('home'); if (e.state?.lang) setLang(e.state.lang) }
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])
 
-  // Inject goToPortfolio into the portfolio link
   const tWithNav = {
     ...t,
     links: t.links.map(l =>
-      l.title === 'Portfolio' || l.title === 'Portfolio'
+      l.title === 'Portfolio'
         ? { ...l, onClick: goToPortfolio }
         : l
     ),
   }
 
+  if (page === 'article') {
+    return (
+      <>
+        <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={tWithNav} />
+        <Nav onOpen={() => setMenuOpen(true)} />
+        <ArticlePage onBack={goToPortfolio} />
+      </>
+    )
+  }
+
   if (page === 'portfolio') {
     return (
       <>
-        <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={t} />
+        <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={tWithNav} />
         <Nav onOpen={() => setMenuOpen(true)} />
-        <ArticlePage onBack={goHome} />
+        <PortfolioPage t={t} onCardClick={goToArticle} />
       </>
     )
   }
 
   return (
     <>
-      <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={t} />
+      <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={tWithNav} />
       <Nav onOpen={() => setMenuOpen(true)} />
       <div className="site-wrap">
         <Hero t={t} />
