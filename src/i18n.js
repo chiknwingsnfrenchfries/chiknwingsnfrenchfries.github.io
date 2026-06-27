@@ -16,7 +16,7 @@ export const i18n = {
     linksLabel: 'Work with me',
     links: [
       { icon: '▶️', title: 'Watch My Vlog', sub: 'Flows & Funnels on YouTube', href: 'https://www.youtube.com/@FlowsandFunnels', yt: true },
-      { icon: '🗂️', title: 'Projects', sub: 'Flows, CDP setups & campaigns', href: '#' },
+      { icon: '🗂️', title: 'Projects', sub: 'Flows, CDP setups & campaigns', href: '#', id: 'projects' },
       { icon: '📞', title: '20 Min Call — Book Now', sub: "Let's talk automation strategy", href: 'https://calendly.com/YOURLINK', featured: true },
       { icon: '✉️', title: 'Shoot Me an Email', sub: 'Hello@edgarramos.com', href: 'mailto:Hello@edgarramos.com' },
     ],
@@ -33,6 +33,7 @@ export const i18n = {
     namePlaceholder: 'Your name',
     emailPlaceholder: 'Your email',
     submitLabel: 'Subscribe →',
+    projectsTitle: 'Projects',
     portfolioEyebrow: 'Work',
     portfolioProjects: [
       {
@@ -62,7 +63,7 @@ export const i18n = {
     linksLabel: 'Travailler ensemble',
     links: [
       { icon: '▶️', title: 'Regarder mon Vlog', sub: 'Flows & Funnels sur YouTube', href: 'https://www.youtube.com/@FlowsandFunnels', yt: true },
-      { icon: '🗂️', title: 'Projets', sub: 'Flows, CDP et campagnes réalisés', href: '#' },
+      { icon: '🗂️', title: 'Projets', sub: 'Flows, CDP et campagnes réalisés', href: '#', id: 'projects' },
       { icon: '📞', title: 'Appel 20 min — Réserver', sub: 'Parlons stratégie d\'automatisation', href: 'https://calendly.com/YOURLINK', featured: true },
       { icon: '✉️', title: 'Envoyez-moi un courriel', sub: 'Hello@edgarramos.com', href: 'mailto:Hello@edgarramos.com' },
     ],
@@ -79,6 +80,7 @@ export const i18n = {
     namePlaceholder: 'Votre nom',
     emailPlaceholder: 'Votre courriel',
     submitLabel: 'S\'abonner →',
+    projectsTitle: 'Projets',
     portfolioEyebrow: 'Projets',
     portfolioProjects: [
       {
@@ -104,7 +106,7 @@ export function detectLang() {
 
 export function detectPage() {
   const path = window.location.pathname.toLowerCase()
-  if (/^\/(en|fr)\/portfolio\/[^/]+/.test(path)) return 'article'
-  if (/^\/(en|fr)\/portfolio(\/|$)/.test(path)) return 'portfolio'
+  if (/^\/(en|fr)\/projects\/[^/]+/.test(path)) return 'article'
+  if (/^\/(en|fr)\/projects(\/|$)/.test(path)) return 'projects'
   return 'home'
 }
