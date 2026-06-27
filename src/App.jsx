@@ -221,7 +221,7 @@ function AboutMe({ t }) {
         <div className="about-block">
           <span className="about-label">{t.projectLabel}</span>
           <ScrollExpand>
-            <a ref={projectRef} className="project-card reveal" href="https://edgarramos.com/en/portfolio/real-estate-quiz" target="_blank" rel="noopener noreferrer">
+            <a ref={projectRef} className="project-card reveal" href="https://edgarramos.com/en/projects/real-estate-quiz" target="_blank" rel="noopener noreferrer">
               <div className="project-emoji">🏡</div>
               <div>
                 <div className="project-name">Real estate quiz</div>
@@ -316,7 +316,7 @@ function PortfolioPage({ t, onCardClick }) {
         fontWeight: 600, lineHeight: 1.05, letterSpacing: '-0.02em',
         color: 'var(--ink)', marginBottom: 56,
       }}>
-        Portfolio
+        {t.projectsTitle}
       </h1>
       <div className="portfolio-grid">
         {t.portfolioProjects.map((project, i) => (
@@ -354,16 +354,16 @@ export default function App() {
 
   const t = i18n[lang]
 
-  function goToPortfolio() {
-    setPage('portfolio')
+  function goToProjects() {
+    setPage('projects')
     setMenuOpen(false)
-    history.pushState({ page: 'portfolio', lang }, '', `/${lang}/portfolio`)
+    history.pushState({ page: 'projects', lang }, '', `/${lang}/projects`)
     window.scrollTo(0, 0)
   }
 
   function goToArticle(slug) {
     setPage('article')
-    history.pushState({ page: 'article', slug, lang }, '', `/${lang}/portfolio/${slug}`)
+    history.pushState({ page: 'article', slug, lang }, '', `/${lang}/projects/${slug}`)
     window.scrollTo(0, 0)
   }
 
@@ -377,8 +377,8 @@ export default function App() {
     document.documentElement.lang = lang
     document.title = page === 'article'
       ? 'Lead Gen Quiz — Edgar Ramos'
-      : page === 'portfolio'
-      ? 'Portfolio — Edgar Ramos'
+      : page === 'projects'
+      ? 'Projects — Edgar Ramos'
       : lang === 'fr' ? 'Edgar — Automatisation Marketing' : 'Edgar — Marketing Automation'
     const path = window.location.pathname
     if (!/^\/(en|fr)(\/|$)/.test(path)) {
@@ -389,7 +389,7 @@ export default function App() {
   useEffect(() => {
     const onPop = (e) => {
       if (e.state?.page === 'article') setPage('article')
-      else if (e.state?.page === 'portfolio') setPage('portfolio')
+      else if (e.state?.page === 'projects') setPage('projects')
       else { setPage('home'); if (e.state?.lang) setLang(e.state.lang) }
     }
     window.addEventListener('popstate', onPop)
@@ -399,8 +399,8 @@ export default function App() {
   const tWithNav = {
     ...t,
     links: t.links.map(l =>
-      l.title === 'Portfolio'
-        ? { ...l, onClick: goToPortfolio }
+      l.id === 'projects'
+        ? { ...l, onClick: goToProjects }
         : l
     ),
   }
@@ -410,12 +410,12 @@ export default function App() {
       <>
         <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={tWithNav} />
         <Nav onOpen={() => setMenuOpen(true)} />
-        <ArticlePage onBack={goToPortfolio} />
+        <ArticlePage onBack={goToProjects} />
       </>
     )
   }
 
-  if (page === 'portfolio') {
+  if (page === 'projects') {
     return (
       <>
         <FullMenu open={menuOpen} onClose={() => setMenuOpen(false)} lang={lang} setLang={setLang} t={tWithNav} />
